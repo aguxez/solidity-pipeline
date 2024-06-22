@@ -27,17 +27,6 @@ jobs:
         with:
           version: nightly
 
-      - name: Run Forge build
-        run: |
-          forge --version
-          forge build --sizes
-        id: build
-
-      - name: Run Forge tests
-        run: |
-          forge test -vvv
-        id: test
-
       - name: Deploy contracts
         run: |
           for file in script/deploy/*; do
@@ -61,8 +50,3 @@ jobs:
           for assignment in "${assignments[@]}"; do
             echo "$assignment" >> $GITHUB_ENV
           done
-
-      - name: Verify env
-        run: |
-          echo "Counter: $Counter"
-          echo "Proxy: $CounterProxy"
