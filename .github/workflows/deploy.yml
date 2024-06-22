@@ -1,0 +1,68 @@
+name: CI/CD
+
+on: workflow_dispatch
+
+env:
+  FOUNDRY_PROFILE: ci
+  RPC_URL: ${{ secrets.RPC_URL }}
+  SIGNER_ADDRESS: ${{ vars.SIGNER_ADDRESS }}
+  SIGNER_PK: ${{ secrets.SIGNER_PK }}
+  SAFE_ADDRESS: ${{ vars.SAFE_ADDRESS }}
+  DEPLOYER_PK: ${{ secrets.DEPLOYER_PK }}
+
+jobs:
+  check:
+    strategy:
+      fail-fast: true
+
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Run Forge build
+        run: |
+          forge --version
+          forge build --sizes
+        id: build
+
+      - name: Run Forge tests
+        run: |
+          forge test -vvv
+        id: test
+
+      - name: Deploy contracts
+        run: |
+          for file in script/deploy/*; do
+            forge script --chain sepolia "$file:Deployment" \
+              --rpc-url $RPC_URL -vvvv --broadcast
+          done;
+        id: deployment
+
+      - name: Aggregate Deployments and Source env
+        run: |
+          declare -a assignments
+
+          for file in broadcast/*.s.sol/**/*.json; do
+            while IFS= read -r line; do
+              contractName=$(echo "$line" | jq -r '.contractName')
+              contractAddress=$(echo "$line" | jq -r '.contractAddress')
+              assignments+=("$contractName=$contractAddress")
+            done < <(jq -c '.transactions[] | {contractName: .contractName, contractAddress: .contractAddress}' "$file")
+          done
+
+          for assignment in "${assignments[@]}"; do
+            echo "$assignment" >> $GITHUB_ENV
+          done
+
+      - name: Verify env
+        run: |
+          echo "Counter: $Counter"
+          echo "Proxy: $CounterProxy"

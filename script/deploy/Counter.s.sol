@@ -2,10 +2,10 @@
 pragma solidity ^0.8.13;
 
 import {Script, console} from "forge-std/Script.sol";
-import {Counter} from "../src/Counter.sol";
-import {CounterProxy} from "../src/CounterProxy.sol";
+import {Counter} from "../../src/Counter.sol";
+import {CounterProxy} from "../../src/CounterProxy.sol";
 import {Strings} from "@openzeppelin/contracts/utils/Strings.sol";
-import {DeployValidator} from "./DeployValidator.s.sol";
+import {DeployValidator} from "../DeployValidator.s.sol";
 
 // This script should be called only when you want to upgrade.
 // Ensuring the contract hasn't been deployed can be done by sourcing the environment
@@ -14,7 +14,7 @@ import {DeployValidator} from "./DeployValidator.s.sol";
 contract Upgrade is Script, DeployValidator {
     error ProxyNotDeployed();
 
-    function setUp() public {
+    function setUp() public view {
         // Ensure the proxy has been deployed already. It is the duty of the caller to ensure the address
         // is correct.
         if (!isDeployed("CounterProxy")) revert ProxyNotDeployed();

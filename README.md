@@ -14,14 +14,14 @@ The example script I provided has two contracts, one for the first time deployme
 2. Run the script
 
 ```sh
-forge script --chain sepolia script/Counter.s.sol:Deployment --rpc-url $RPC_URL -vvvv --broadcast
+forge script --chain sepolia script/deploy/Counter.s.sol:Deployment --rpc-url $RPC_URL -vvvv --broadcast
 ```
 
 3. Make changes to the `Counter.sol` contract
 4. Run an upgrade
 
 ```sh
-forge script --chain sepolia script/Counter.s.sol:Upgrade --rpc-url $RPC_URL -vvvv --broadcast
+forge script --chain sepolia script/deploy/Counter.s.sol:Upgrade --rpc-url $RPC_URL -vvvv --broadcast
 ```
 
 5. Source the environment with the addresses
