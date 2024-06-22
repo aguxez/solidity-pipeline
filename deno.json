@@ -1,0 +1,11 @@
+{
+  "tasks": {
+    "dev": "deno run --watch safe-publish.ts",
+    "build": "deno check safe-publish.ts"
+  },
+  "imports": {
+    "@safe-global/api-kit": "npm:@safe-global/api-kit",
+    "@safe-global/protocol-kit": "npm:@safe-global/protocol-kit",
+    "@safe-global/safe-core-sdk-types": "npm:@safe-global/safe-core-sdk-types"
+  }
+}
